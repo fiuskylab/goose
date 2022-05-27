@@ -10,15 +10,19 @@ import (
 )
 
 type (
+	// Builder handlers the Goose bootstrap
 	Builder struct {
-		global js.Value
+		global  js.Value
+		console js.Value
 	}
 )
 
 // New return an Empty page
 func New() *Builder {
+	g := js.Global()
 	return &Builder{
-		global: js.Global(),
+		global:  g,
+		console: g.Get("console"),
 	}
 }
 
