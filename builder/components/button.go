@@ -3,6 +3,7 @@ package components
 import (
 	"syscall/js"
 
+	"github.com/fiuskylab/goose/builder/config"
 	"github.com/google/uuid"
 )
 
@@ -22,9 +23,9 @@ func NewButton() *Button {
 // Build creates the given Build element
 func (b *Button) Build() error {
 	doc := js.Global().Get("document")
-	index := doc.Call("getElementById", "index")
+	index := doc.Call("getElementById", config.IndexID)
 	el := doc.Call("createElement", "button")
-	el.Set("innerText", "salve cachorrada")
+	el.Set("innerText", "Lorem ipsum")
 
 	index.Call("appendChild", el)
 
