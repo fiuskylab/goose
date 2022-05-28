@@ -10,23 +10,28 @@ import (
 )
 
 type (
-	// Builder handlers the Goose bootstrap
-	Builder struct {
+	// builder handlers the Goose bootstrap
+	builder struct {
 		global  js.Value
 		console js.Value
 	}
 )
 
+// Builder is an instance of builder, it will
+// be responsible for handling all actions
+// in DOM.
+var Builder *builder
+
 // New return an Empty page
-func New() *Builder {
+func New() *builder {
 	g := js.Global()
-	return &Builder{
+	return &builder{
 		global:  g,
 		console: g.Get("console"),
 	}
 }
 
-func (b *Builder) Build(cs ...components.Components) {
+func (b *builder) Build(cs ...components.Components) {
 	var err error
 	for _, c := range cs {
 		if err = c.Build(); err != nil {
@@ -35,6 +40,6 @@ func (b *Builder) Build(cs ...components.Components) {
 	}
 }
 
-func (b *Builder) G() js.Value {
+func (b *builder) G() js.Value {
 	return b.global
 }
