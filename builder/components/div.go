@@ -9,12 +9,15 @@ import (
 // Div represents the <div> tag.
 type Div struct {
 	id      string
+	father  js.Value
 	element js.Value
+	attr    Attributes
 }
 
-func NewDiv() *Div {
+func NewDiv(attr Attributes) *Div {
 	return &Div{
-		id: uuid.NewString(),
+		id:   uuid.NewString(),
+		attr: attr,
 	}
 }
 
