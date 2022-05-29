@@ -9,14 +9,17 @@ import (
 
 // Button represents the <button> tag.
 type Button struct {
-	id      string
-	Text    string
-	element js.Value
+	base
 }
 
-func NewButton() *Button {
+// NewButton returns an instance of Div
+// with given attr
+func NewButton(attr Attributes) *Button {
 	return &Button{
-		id: uuid.NewString(),
+		base: base{
+			id:   uuid.NewString(),
+			attr: attr,
+		},
 	}
 }
 
@@ -32,4 +35,16 @@ func (b *Button) Build() error {
 	b.element = el
 
 	return nil
+}
+
+// SetFather receives a js.Value and assign
+// it to `father` field.
+func (b *Button) SetFather(father js.Value) *Button {
+	b.father = father
+	return b
+}
+
+// GetFather returns current component's father.
+func (b *Button) GetFather() js.Value {
+	return b.father
 }

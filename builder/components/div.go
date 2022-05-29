@@ -8,16 +8,17 @@ import (
 
 // Div represents the <div> tag.
 type Div struct {
-	id      string
-	father  js.Value
-	element js.Value
-	attr    Attributes
+	base
 }
 
+// NewDiv returns an instance of Div
+// with given attr
 func NewDiv(attr Attributes) *Div {
 	return &Div{
-		id:   uuid.NewString(),
-		attr: attr,
+		base: base{
+			id:   uuid.NewString(),
+			attr: attr,
+		},
 	}
 }
 
@@ -33,4 +34,16 @@ func (d *Div) Build() error {
 	d.element = el
 
 	return nil
+}
+
+// SetFather receives a js.Value and assign
+// it to `father` field.
+func (d *Div) SetFather(father Components) *Div {
+	d.father = father.GetFather()
+	return d
+}
+
+// GetFather returns current component's father.
+func (d *Div) GetFather() js.Value {
+	return d.father
 }
