@@ -3,6 +3,7 @@ package components
 import (
 	"syscall/js"
 
+	"github.com/fiuskylab/goose/builder/config"
 	"github.com/google/uuid"
 )
 
@@ -13,8 +14,8 @@ type Div struct {
 
 // NewDiv returns an instance of Div
 // with given attr
-func NewDiv(attr Attributes) *Div {
-	return &Div{
+func NewDiv(attr Attributes, el ...js.Value) Div {
+	return Div{
 		base: base{
 			id:   uuid.NewString(),
 			attr: attr,
@@ -22,8 +23,17 @@ func NewDiv(attr Attributes) *Div {
 	}
 }
 
+func GetIndex() Div {
+	index := js.Global().Call("getElementById", config.IndexID)
+	return Div{
+		base: base{
+			element: index,
+		},
+	}
+}
+
 // Build creates the given Div element
-func (d *Div) Build() error {
+func (d Div) Build() error {
 	doc := js.Global().Get("document")
 	index := doc.Call("getElementById", "index")
 	el := doc.Call("createElement", "div")
@@ -38,12 +48,12 @@ func (d *Div) Build() error {
 
 // SetFather receives a js.Value and assign
 // it to `father` field.
-func (d *Div) SetFather(father Components) *Div {
+func (d Div) SetFather(father Components) Components {
 	d.father = father.GetFather()
 	return d
 }
 
 // GetFather returns current component's father.
-func (d *Div) GetFather() js.Value {
+func (d Div) GetFather() js.Value {
 	return d.father
 }

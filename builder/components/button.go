@@ -14,8 +14,8 @@ type Button struct {
 
 // NewButton returns an instance of Div
 // with given attr
-func NewButton(attr Attributes) *Button {
-	return &Button{
+func NewButton(attr Attributes) Button {
+	return Button{
 		base: base{
 			id:   uuid.NewString(),
 			attr: attr,
@@ -24,7 +24,7 @@ func NewButton(attr Attributes) *Button {
 }
 
 // Build creates the given Build element
-func (b *Button) Build() error {
+func (b Button) Build() error {
 	doc := js.Global().Get("document")
 	index := doc.Call("getElementById", config.IndexID)
 	el := doc.Call("createElement", "button")
@@ -39,12 +39,12 @@ func (b *Button) Build() error {
 
 // SetFather receives a js.Value and assign
 // it to `father` field.
-func (b *Button) SetFather(father js.Value) *Button {
-	b.father = father
+func (b Button) SetFather(father Components) Components {
+	b.father = father.GetFather()
 	return b
 }
 
 // GetFather returns current component's father.
-func (b *Button) GetFather() js.Value {
+func (b Button) GetFather() js.Value {
 	return b.father
 }
