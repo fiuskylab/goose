@@ -1,9 +1,8 @@
 package components
 
-import "syscall/js"
-
-// Components
+// Components contains all base functions
+// for a Component.
 type Components interface {
 	Build() error
-	SetFather(js.Value) *Components
+	SetFather(Components) Components
 }
