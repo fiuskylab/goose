@@ -3,7 +3,6 @@ package components
 import (
 	"syscall/js"
 
-	"github.com/fiuskylab/goose/builder/config"
 	"github.com/google/uuid"
 )
 
@@ -19,32 +18,43 @@ func NewButton(attr Attributes) Button {
 		base: base{
 			id:   uuid.NewString(),
 			attr: attr,
+			doc:  js.Global().Get("document"),
 		},
 	}
 }
 
 // Build creates the given Build element
 func (b Button) Build() error {
-	doc := js.Global().Get("document")
-	index := doc.Call("getElementById", config.IndexID)
-	el := doc.Call("createElement", "button")
+	el := b.doc.Call("createElement", "button")
 	el.Set("innerText", "Lorem ipsum")
 
-	index.Call("appendChild", el)
+	b.father.Call("appendChild", el)
 
 	b.element = el
 
 	return nil
 }
 
+// GetElement returns current Component's element.
+func (b Button) GetElement() js.Value {
+	return b.element
+}
+
 // SetFather receives a js.Value and assign
 // it to `father` field.
-func (b Button) SetFather(father Components) Components {
-	b.father = father.GetFather()
+func (b Button) SetFather(father Component) Component {
+	b.father = father.GetElement()
 	return b
 }
 
 // GetFather returns current component's father.
 func (b Button) GetFather() js.Value {
 	return b.father
+}
+
+// AddChild adds a new Component as a children
+// to current Component.
+func (b Button) AddChild(child Component) Component {
+	b.children = append(b.children, child)
+	return b
 }

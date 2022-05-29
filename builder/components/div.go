@@ -19,41 +19,56 @@ func NewDiv(attr Attributes, el ...js.Value) Div {
 		base: base{
 			id:   uuid.NewString(),
 			attr: attr,
+			doc:  js.Global().Get("document"),
 		},
 	}
 }
 
+// GetIndex returns a Component instance
+// of the index <div>.
 func GetIndex() Div {
-	index := js.Global().Call("getElementById", config.IndexID)
+	doc := js.Global().Get("document")
+	el := doc.Call("getElementById", config.IndexID)
 	return Div{
 		base: base{
-			element: index,
+			doc:     doc,
+			element: el,
 		},
 	}
 }
 
 // Build creates the given Div element
 func (d Div) Build() error {
-	doc := js.Global().Get("document")
-	index := doc.Call("getElementById", "index")
-	el := doc.Call("createElement", "div")
+	el := d.doc.Call("createElement", "div")
 	el.Set("innerText", "Lorem ipsum")
 
-	index.Call("appendChild", el)
+	d.GetFather().Call("appendChild", el)
 
 	d.element = el
 
 	return nil
 }
 
+// GetElement returns current Component's element.
+func (d Div) GetElement() js.Value {
+	return d.element
+}
+
 // SetFather receives a js.Value and assign
 // it to `father` field.
-func (d Div) SetFather(father Components) Components {
-	d.father = father.GetFather()
+func (d Div) SetFather(father Component) Component {
+	d.father = father.GetElement()
 	return d
 }
 
 // GetFather returns current component's father.
 func (d Div) GetFather() js.Value {
 	return d.father
+}
+
+// AddChild adds a new Component as a children
+// to current Component.
+func (d Div) AddChild(child Component) Component {
+	d.children = append(d.children, child)
+	return d
 }
