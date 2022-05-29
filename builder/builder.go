@@ -7,7 +7,6 @@ import (
 	"syscall/js"
 
 	"github.com/fiuskylab/goose/builder/components"
-	"github.com/fiuskylab/goose/builder/config"
 )
 
 type (
@@ -15,6 +14,7 @@ type (
 	builder struct {
 		global  js.Value
 		console js.Value
+		index   components.Component
 	}
 )
 
@@ -26,18 +26,19 @@ var Builder *builder
 // bootstraps the builder package
 func init() {
 	g := js.Global()
+	index := components.GetIndex()
 	Builder = &builder{
 		global:  g,
 		console: g.Get("console"),
+		index:   index,
 	}
 }
 
-func (b *builder) Build(cs ...components.Components) {
+func (b *builder) Build(cs ...components.Component) {
 	var err error
-	body := b.G().Call("getElementById", config.IndexID)
 	for _, c := range cs {
 		if err = c.
-			SetFather(body).
+			SetFather(b.index).
 			Build(); err != nil {
 			panic(err)
 		}
