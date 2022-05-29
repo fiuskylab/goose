@@ -4,8 +4,9 @@ import "syscall/js"
 
 type base struct {
 	id       string
+	doc      js.Value
 	father   js.Value
-	children []js.Value
+	children []Component
 	element  js.Value
 	attr     Attributes
 }
