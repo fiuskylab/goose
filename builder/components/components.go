@@ -6,7 +6,7 @@ import "syscall/js"
 // for a Component.
 type Component interface {
 	// Build builds the components
-	Build() error
+	Build() Component
 	// GetElement returns current Component's element.
 	GetElement() js.Value
 	// SetFather sets the father of

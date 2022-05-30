@@ -1,6 +1,7 @@
 package components
 
 import (
+	"fmt"
 	"syscall/js"
 
 	"github.com/google/uuid"
@@ -24,15 +25,14 @@ func NewButton(attr Attributes) Button {
 }
 
 // Build creates the given Build element
-func (b Button) Build() error {
+func (b Button) Build() Component {
 	el := b.doc.Call("createElement", "button")
 	el.Set("innerText", "Lorem ipsum")
-
 	b.father.Call("appendChild", el)
 
 	b.element = el
 
-	return nil
+	return b
 }
 
 // GetElement returns current Component's element.
@@ -44,6 +44,8 @@ func (b Button) GetElement() js.Value {
 // it to `father` field.
 func (b Button) SetFather(father Component) Component {
 	b.father = father.GetElement()
+	fmt.Println("Button.SetFather Received:", father.GetElement())
+	fmt.Println("Button.SetFather: ", b.father)
 	return b
 }
 

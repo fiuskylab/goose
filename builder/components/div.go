@@ -14,7 +14,7 @@ type Div struct {
 
 // NewDiv returns an instance of Div
 // with given attr
-func NewDiv(attr Attributes, el ...js.Value) Div {
+func NewDiv(attr Attributes) Div {
 	return Div{
 		base: base{
 			id:   uuid.NewString(),
@@ -33,12 +33,14 @@ func GetIndex() Div {
 		base: base{
 			doc:     doc,
 			element: el,
+			father:  el,
+			id:      config.IndexID,
 		},
 	}
 }
 
 // Build creates the given Div element
-func (d Div) Build() error {
+func (d Div) Build() Component {
 	el := d.doc.Call("createElement", "div")
 	el.Set("innerText", "Lorem ipsum")
 
@@ -46,7 +48,7 @@ func (d Div) Build() error {
 
 	d.element = el
 
-	return nil
+	return d
 }
 
 // GetElement returns current Component's element.
