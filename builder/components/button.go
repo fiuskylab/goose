@@ -1,7 +1,6 @@
 package components
 
 import (
-	"fmt"
 	"syscall/js"
 
 	"github.com/google/uuid"
@@ -44,8 +43,6 @@ func (b Button) GetElement() js.Value {
 // it to `father` field.
 func (b Button) SetFather(father Component) Component {
 	b.father = father.GetElement()
-	fmt.Println("Button.SetFather Received:", father.GetElement())
-	fmt.Println("Button.SetFather: ", b.father)
 	return b
 }
 
