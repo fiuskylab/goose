@@ -34,14 +34,15 @@ func init() {
 	}
 }
 
+func (b *builder) GetComponent() components.Component {
+	return b.index
+}
+
 func (b *builder) Build(cs ...components.Component) {
-	var err error
 	for _, c := range cs {
-		if err = c.
+		c.
 			SetFather(b.index).
-			Build(); err != nil {
-			panic(err)
-		}
+			Build()
 	}
 }
 
