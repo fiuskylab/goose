@@ -10,18 +10,34 @@ import (
 // Div represents the <div> tag.
 type Div struct {
 	base
+	Component
 }
 
 // NewDiv returns an instance of Div
 // with given attr
-func NewDiv(attr Attributes) Div {
+func NewDiv(attr Attributes, children ...Component) Div {
 	return Div{
 		base: base{
-			id:   uuid.NewString(),
-			attr: attr,
-			doc:  js.Global().Get("document"),
+			id:       uuid.NewString(),
+			attr:     attr,
+			doc:      js.Global().Get("document"),
+			children: children,
 		},
 	}
+}
+
+// Build creates the given Div element
+func (d Div) Build() Component {
+	b := Base{
+		id:       d.id,
+		doc:      d.doc,
+		father:   d.father,
+		children: d.children,
+		element:  d.element,
+		Tag:      "div",
+		Attr:     d.attr,
+	}
+	return b.Build()
 }
 
 // GetIndex returns a Component instance
@@ -37,40 +53,4 @@ func GetIndex() Div {
 			id:      config.IndexID,
 		},
 	}
-}
-
-// Build creates the given Div element
-func (d Div) Build() Component {
-	el := d.doc.Call("createElement", "div")
-	el.Set("innerText", "Lorem ipsum")
-
-	d.GetFather().Call("appendChild", el)
-
-	d.element = el
-
-	return d
-}
-
-// GetElement returns current Component's element.
-func (d Div) GetElement() js.Value {
-	return d.element
-}
-
-// SetFather receives a js.Value and assign
-// it to `father` field.
-func (d Div) SetFather(father Component) Component {
-	d.father = father.GetElement()
-	return d
-}
-
-// GetFather returns current component's father.
-func (d Div) GetFather() js.Value {
-	return d.father
-}
-
-// AddChild adds a new Component as a children
-// to current Component.
-func (d Div) AddChild(child Component) Component {
-	d.children = append(d.children, child)
-	return d
 }

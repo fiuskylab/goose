@@ -1,7 +1,5 @@
 package components
 
-import "fmt"
-
 type Node struct {
 	Element  Component
 	Father   Component
@@ -14,8 +12,6 @@ func (n Node) Build() error {
 	for _, child := range n.Children {
 		child.Father = n.Element
 		child.Element = child.Element.SetFather(n.Element)
-		fmt.Println("Element", n.Element)
-		fmt.Println("Child.GetFather", child.Element.GetFather())
 		if err := child.Build(); err != nil {
 			panic(err)
 		}
