@@ -4,7 +4,6 @@ import (
 	"syscall/js"
 
 	"github.com/fiuskylab/goose/builder/config"
-	"github.com/google/uuid"
 )
 
 // Div represents the <div> tag.
@@ -15,15 +14,8 @@ type Div struct {
 
 // NewDiv returns an instance of Div
 // with given attr
-func NewDiv(attr Attributes, children ...Component) Div {
-	return Div{
-		base: base{
-			id:       uuid.NewString(),
-			attr:     attr,
-			doc:      js.Global().Get("document"),
-			children: children,
-		},
-	}
+func NewDiv(attr Attributes, children ...Component) Component {
+	return NewBase("div", attr, children...)
 }
 
 // Build creates the given Div element
