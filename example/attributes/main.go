@@ -20,6 +20,18 @@ func main() {
 				Element: components.NewBase("a", components.Attributes{
 					"href": "https://twitch.tv/rafiusky",
 				}),
+				Children: []components.Node{
+					{
+						Element: components.NewDiv(components.Attributes{
+							"style": "height: 100px; width: 100px; background-color: blue;",
+						}),
+					},
+					{
+						Element: components.NewButton(components.Attributes{
+							"style": "height: 100px; width: 100px; background-color: blue;",
+						}),
+					},
+				},
 			},
 			{
 				Element: components.NewBase("a", components.Attributes{
