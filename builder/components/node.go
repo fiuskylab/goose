@@ -1,5 +1,7 @@
 package components
 
+// Node represents the structure
+// to build a page.
 type Node struct {
 	Element  Component
 	Father   Component
