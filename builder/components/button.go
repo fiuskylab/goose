@@ -2,7 +2,6 @@ package components
 
 // Button represents the <button> tag.
 type Button struct {
-	base
 	Component
 }
 

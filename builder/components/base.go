@@ -7,15 +7,8 @@ import (
 	"github.com/google/uuid"
 )
 
-type base struct {
-	id       string
-	doc      js.Value
-	father   js.Value
-	children []Component
-	element  js.Value
-	attr     Attributes
-}
-
+// Base is the generic representation
+// of all components.
 type Base struct {
 	Tag      string
 	id       string
@@ -26,6 +19,8 @@ type Base struct {
 	Attr     Attributes
 }
 
+// NewBase returns an instance of Component
+// with given values.
 func NewBase(tag string, attr Attributes, children ...Component) *Base {
 	return &Base{
 		Tag:      tag,
@@ -36,6 +31,9 @@ func NewBase(tag string, attr Attributes, children ...Component) *Base {
 	}
 }
 
+// Build will set all base values for
+// the Component, and then create the
+// element for it.
 func (b *Base) Build() Component {
 	if b.id == config.IndexID {
 		return b
@@ -59,10 +57,14 @@ func (b *Base) setAttributes() {
 	}
 }
 
+// GetElement returns the js.Value
+// of the current
 func (b *Base) GetElement() js.Value {
 	return b.element
 }
 
+// SetFather assigns a given Component as
+// a father of the current Component.
 func (b *Base) SetFather(father Component) Component {
 	b.father = father.GetElement()
 	return b
