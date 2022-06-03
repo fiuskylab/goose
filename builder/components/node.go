@@ -8,6 +8,9 @@ type Node struct {
 	Children []Node
 }
 
+// Build starts iterating all
+// Elements and Childrens, and
+// building each one.
 func (n Node) Build() error {
 	n.Element = n.Element.Build()
 
