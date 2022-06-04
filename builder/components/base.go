@@ -47,6 +47,10 @@ func (b *Base) Build() Component {
 
 	b.father.Call("appendChild", b.element)
 
+	for _, chil := range b.children {
+		chil.Build()
+	}
+
 	return b
 }
 
