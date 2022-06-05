@@ -4,16 +4,19 @@ import "fmt"
 
 type State struct {
 	_        struct{}
-	modified chan struct{}
+	Modified chan struct{}
+	Stop     chan struct{}
 }
 
-func (s *State) run(f func() error) {
-	i := 1
-	for range s.modified {
-		fmt.Printf("Ran %d times", i)
-		i++
-		if err := f(); err != nil {
-			fmt.Println(err.Error())
+func (s *State) Run(f func() error) {
+	for {
+		select {
+		case <-s.Modified:
+			if err := f(); err != nil {
+				fmt.Println(err.Error())
+			}
+		case <-s.Stop:
+			return
 		}
 	}
 }
