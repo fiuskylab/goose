@@ -21,11 +21,11 @@ func main() {
 	}
 
 	component.Build(&app)
-
 }
 
 // App is the example component
 type App struct {
+	component.Base
 	Counter  int
 	Template string
 	element  js.Value
@@ -36,14 +36,14 @@ type App struct {
 // AddOne incremente the Counter
 func (a *App) AddOne() {
 	a.Counter++
+	a.Ack()
 }
 
 // HTML return the HTML  template for the
 func (a *App) setHTML() {
-	a.Template = `<>
-		<button onClick={}>Add Number</button>
+	a.Template = `
+		<button onClick="a.AddOne()">Add Number</button>
 		<div>Counter: {{.Counter}}</div>
-	</>
 	`
 }
 
@@ -55,6 +55,8 @@ func (a *App) Build() error {
 	if err := t.Execute(a.buf, a); err != nil {
 		return err
 	}
+
+	a.AddOne()
 	return nil
 }
 
@@ -70,4 +72,8 @@ func (a *App) Father() js.Value {
 
 func (a *App) SetElement(el js.Value) {
 	a.element = el
+}
+
+func (a *App) GetState() component.State {
+	return a.State
 }
