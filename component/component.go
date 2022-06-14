@@ -1,63 +1,66 @@
-//go:build js && wasm
-// +build js,wasm
-
 package component
 
 import (
+	"bytes"
+	"html/template"
 	"syscall/js"
-	"time"
+
+	"github.com/fiuskylab/goose/builder/config"
+	"github.com/google/uuid"
+	"go.uber.org/zap"
 )
 
-// Component is the
-type Component interface {
-	Build() error
-	GetHTML() string
-	Father() js.Value
-	SetElement(js.Value)
-	GetState() State
+type (
+	// Component ...
+	Component interface {
+		HTML() string
+	}
+
+	// Base is the base struct for building
+	// a component.
+	Base struct {
+		el   js.Value
+		id   string
+		html string
+	}
+)
+
+var (
+	g     js.Value
+	doc   js.Value
+	index js.Value
+	log   *zap.Logger
+)
+
+func init() {
+	g = js.Global()
+	doc = g.Get("document")
+	index = doc.Call("getElementById", config.IndexID)
+	log, _ = zap.NewProduction()
 }
 
-// Base struct have the necessary
-// fields to handle a Component
-type Base struct {
-	State State
-}
+type components []Component
 
-// Ack will send a signal(chan struct{})
-// to say that the component must be updated.
-// e.g. A button was pressed
-func (b *Base) Ack() {
-	b.
-		State.
-		modified <- struct{}{}
-}
+// Build ...
+func Build(cs ...Component) {
+	for _, c := range cs {
+		id := uuid.NewString()
+		t, err := template.New(id).Parse(c.HTML())
+		if err != nil {
+			log.Error(err.Error())
+			continue
+		}
 
-// Build creates the given component
-func Build(c Component) {
-	state := c.GetState()
-	state.modified = make(chan struct{}, 10)
+		writer := &bytes.Buffer{}
+		if err := t.Execute(writer, c); err != nil {
+			log.Error(err.Error())
+			continue
+		}
 
-	f := func() error {
-		doc := js.Global().Get("document")
 		el := doc.Call("createElement", "div")
 
-		if err := c.Build(); err != nil {
-			panic(err)
-		}
+		el.Set("innerHTML", writer.String())
 
-		el.Set("innerHTML", c.GetHTML())
-
-		c.Father().Call("appendChild", el)
-
-		return nil
+		index.Call("appendChild", el)
 	}
-
-	for i := 0; i < 10; i++ {
-		time.Sleep(time.Second * 1)
-		if err := f(); err != nil {
-			panic(err)
-		}
-	}
-
-	state.run(f)
 }
