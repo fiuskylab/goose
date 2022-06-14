@@ -4,76 +4,29 @@
 package main
 
 import (
-	"bytes"
-	"syscall/js"
-	"text/template"
-
 	"github.com/fiuskylab/goose/component"
 )
 
-func main() {
-	doc := js.Global().Get("document")
-
-	f := doc.Call("getElementById", "index")
-	app := App{
-		Counter: 100,
-		father:  f,
-	}
-
-	component.Build(&app)
-}
-
-// App is the example component
+// App is our app.
 type App struct {
 	component.Base
-	Counter  int
-	Template string
-	element  js.Value
-	buf      *bytes.Buffer
-	father   js.Value
+	Text    string
+	Counter *int
 }
 
-// AddOne incremente the Counter
-func (a *App) AddOne() {
-	a.Counter++
-	a.Ack()
-}
-
-// HTML return the HTML  template for the
-func (a *App) setHTML() {
-	a.Template = `
-		<button onClick="a.AddOne()">Add Number</button>
-		<div>Counter: {{.Counter}}</div>
+// HTML will set current Component HTML
+func (a *App) HTML() string {
+	return `
+		{{.Text}} something {{.Counter}}
 	`
 }
 
-// Build d
-func (a *App) Build() error {
-	a.setHTML()
-	t := template.Must(template.New("app").Parse(a.Template))
-	a.buf = new(bytes.Buffer)
-	if err := t.Execute(a.buf, a); err != nil {
-		return err
+func main() {
+	i := 20
+	app := &App{
+		Text:    "Sumemo Doido",
+		Counter: &i,
 	}
 
-	a.AddOne()
-	return nil
-}
-
-// GetHTML returns the HTML string
-// of the current Component
-func (a *App) GetHTML() string {
-	return a.buf.String()
-}
-
-func (a *App) Father() js.Value {
-	return a.father
-}
-
-func (a *App) SetElement(el js.Value) {
-	a.element = el
-}
-
-func (a *App) GetState() component.State {
-	return a.State
+	component.Build(app)
 }
